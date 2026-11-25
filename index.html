@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ebe0f6">
+<title>FELIZ CUMPLEAÑOS</title>
+
+<style>
+:root {
+  /* Morado: el color principal */
+  --morado-900: #47286b;
+  --morado-700: #6a42a0;
+  --morado-500: #9168c9;
+
+  /* Acompañantes */
+  --lila-100: #efe6f7;
+  --rosa-300: #f4a9c6;
+  --amarillo-200: #fbe7a6;
+  --crema: #fffaf2;
+  --tinta: #4f3f5c;            
+  --verde-luz: #b6dc98;
+  --verde-medio: #91c47b;
+  --verde-sombra: #6fa45f;
+
+  --fuente-titulo: "Cormorant Garamond", "Cormorant", "Playfair Display",
+                   "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --fuente-texto: "Nunito", "Quicksand", ui-rounded, "SF Pro Rounded",
+                  system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --alto-tulipan: clamp(84px, 18vh, 200px);
+  --ancho-oveja:  clamp(80px, 24vw, 160px);
+  --ancho-grulla: clamp(60px, 17vw, 128px);
+  --ancho-pasto:  clamp(24px, 7vw, 44px);
+  --ruido: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .36 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)'/%3E%3C/svg%3E");
+  /* Fibras largas del papel (frecuencia distinta en X y en Y) */
+  --fibras: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .32' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .3 0 0 0 0 .45 0 0 0 .32 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  /* Versión más suave para la carta */
+  --ruido-suave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .35 0 0 0 0 .4 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+}
+
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; }
+
+body {
+  font-family: var(--fuente-texto);
+  color: var(--tinta);
+  background: var(--lila-100);
+  overflow: hidden;                       /* la escena ocupa justo la pantalla */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* La escena es el "escenario" donde vive todo. */
+.escena {
+  position: relative;
+  width: 100%;
+  height: 100vh;                          /* respaldo para navegadores viejos */
+  height: 100dvh;                         /* alto real en celulares */
+  overflow: hidden;
+  isolation: isolate;                     /* crea su propio contexto de capas */
+
+  background:
+    radial-gradient(ellipse 55% 38% at 84% 8%,  rgba(255, 226, 150, .60), transparent 70%), /* luz amarilla */
+    radial-gradient(ellipse 50% 40% at 6% 28%,  rgba(246, 172, 204, .38), transparent 70%), /* brillo rosa */
+    radial-gradient(ellipse 70% 45% at 50% 48%, rgba(255, 255, 255, .60), transparent 70%), /* halo central */
+    linear-gradient(180deg, #e7dbf5 0%, #f4e6f1 40%, #fff1e3 70%, #fdf0dc 100%);
+}
+
+.escena::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;                   /* no bloquea los clics */
+  background-image: var(--ruido), var(--fibras);
+  mix-blend-mode: multiply;
+  opacity: .32;
+}
+
+/* Luces suaves flotando (tipo "bokeh"). Cada <span> recibe su posición,
+   tamaño y color desde el HTML con variables (--x, --y, --t, --c). */
+.luces { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.luces span {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--t);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c) 0%, transparent 68%);
+  filter: blur(3px);
+  animation: deriva var(--d, 18s) ease-in-out infinite alternate;
+}
+@keyframes deriva {
+  to { translate: 20px -28px; }
+}
+
+/* Capas: cuanto mayor el z-index, más "adelante" está. */
+.capa-nubes  { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.capa-aves   { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+.capa-jardin { position: absolute; inset: 0; z-index: 8; pointer-events: none; }
+
+
+.colina {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: block;
+  pointer-events: none;
+}
+.colina-lejana { height: 37vh; z-index: 3; }   
+.colina-media  { height: 32vh; z-index: 5; }
+.colina-cerca  { height: 26vh; z-index: 7; }
+
+.colina polygon {
+  stroke: rgba(255, 255, 255, .28);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;      
+}
+
+.origami { display: block; width: 100%; height: 100%; overflow: visible; }
+
+.origami polygon {
+  stroke: rgba(74, 42, 92, .2);            /* borde marcado del doblez */
+  stroke-width: .6;
+  stroke-linejoin: round;
+}
+
+.c-luz    { fill: var(--luz,    #eee); }
+.c-medio  { fill: var(--medio,  #ddd); }
+.c-sombra { fill: var(--sombra, #ccc); }
+.c-hondo  { fill: var(--hondo,  #bbb); }
+
+.v-luz    { fill: var(--verde-luz); }
+.v-medio  { fill: var(--verde-medio); }
+.v-sombra { fill: var(--verde-sombra); }
+
+/* Línea de pliegue (hundida) y línea de brillo (arista que recibe luz) */
+.pliegue { fill: none; stroke: rgba(55, 25, 75, .22); stroke-width: .7; stroke-linecap: round; }
+.brillo  { fill: none; stroke: rgba(255, 255, 255, .75); stroke-width: .8; stroke-linecap: round; }
+
+/* Sombras suaves que se ponen ENCIMA de una cara, en la zona del doblez */
+.origami .sombra-suave { fill: url(#g-pliegue); stroke: none; }
+.origami .sombra-lado  { fill: url(#g-pliegue-lado); stroke: none; }
+
+
+/* ==========================================================================
+   5. TULIPANES
+   ========================================================================== */
+.tulipan {
+  position: absolute;
+  left: calc(var(--x) * 1%);                /* --x y --y vienen de JavaScript */
+  bottom: calc(var(--y) * 1%);
+  height: calc(var(--alto-tulipan) * var(--tam));
+  aspect-ratio: 1 / 2;                      /* el dibujo mide 100 x 200 */
+  translate: -50% 0;                        /* --x marca el centro del tulipán */
+}
+
+/* El SVG de adentro es el que se mece, girando desde la base del tallo */
+.tulipan > svg {
+  transform-origin: 50% 98%;
+  animation: mecer var(--dur, 6s) ease-in-out var(--retraso, 0s) infinite alternate;
+}
+@keyframes mecer {
+  from { rotate: -2.6deg; }
+  to   { rotate:  2.6deg; }
+}
+
+/* Los de la fila de atrás se ven un poquito más pálidos: "perspectiva aérea" */
+.tulipan.lejos { filter: saturate(.78) brightness(1.04); }
+
+
+/* ==========================================================================
+   6. GRULLAS
+   Cada grulla tiene: un div que flota (.flotador) y dentro el SVG,
+   cuyas alas (.ala) aletean despacito.
+   ========================================================================== */
+.grulla {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  width: calc(var(--ancho-grulla) * var(--tam));
+  aspect-ratio: 160 / 110;
+  translate: -50% 0;
+  filter: drop-shadow(0 12px 8px rgba(90, 50, 110, .16));
+}
+.grulla .flotador {
+  width: 100%;
+  height: 100%;
+  animation: flotar var(--dur, 8s) ease-in-out var(--retraso, 0s) infinite;
+}
+.grulla.mira-derecha svg { transform: scaleX(-1); }   /* espejo */
+
+/* Las alas giran (se aplastan) desde su base, en el lomo de la grulla */
+.grulla .ala {
+  transform-box: view-box;
+  transform-origin: 84px 64px;
+  animation: aletear 3.4s ease-in-out var(--retraso, 0s) infinite;
+}
+@keyframes flotar {
+  0%, 100% { transform: translate(0, 0)       rotate(-2deg); }
+  50%      { transform: translate(12px, -14px) rotate(2deg); }
+}
+@keyframes aletear {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(.72); }
+}
+
+
+/* ==========================================================================
+   7. OVEJAS
+   .oveja → contenedor colocado en el pasto
+     .oveja-sombra → sombrita en el suelo (se encoge cuando salta)
+     .oveja-salto  → la oveja que da saltitos
+   ========================================================================== */
+.oveja {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  bottom: calc(var(--y) * 1%);
+  width: calc(var(--ancho-oveja) * var(--tam));
+  aspect-ratio: 140 / 104;
+  translate: -50% 0;
+}
+.oveja-sombra {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -3%;
+  height: 12%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(60, 50, 40, .28), transparent);
+  animation: sombra-salto var(--dur, 5s) ease-in-out var(--retraso, 0s) infinite;
+}
+.oveja-salto {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 100%;
+  animation: saltito var(--dur, 5s) ease-in-out var(--retraso, 0s) infinite;
+}
+.oveja.mira-derecha svg { transform: scaleX(-1); }
+
+/* La mayor parte del tiempo está quieta; al final se agacha, salta y aterriza */
+@keyframes saltito {
+  0%, 60%, 100% { transform: translateY(0)    scale(1, 1); }
+  67%           { transform: translateY(0)    scale(1.05, .93); }  /* se agacha */
+  77%           { transform: translateY(-17%) scale(.98, 1.04); }  /* en el aire */
+  87%           { transform: translateY(0)    scale(1.05, .94); }  /* aterriza */
+  93%           { transform: translateY(0)    scale(1, 1); }
+}
+@keyframes sombra-salto {
+  0%, 60%, 67%, 87%, 100% { transform: scaleX(1);   opacity: 1; }
+  77%                     { transform: scaleX(.68); opacity: .5; }
+}
+
+/* Colores fijos de la oveja: lana (l-) y cara/patas (k-) */
+.l-blanco { fill: #fffefb; }
+.l-luz    { fill: #f8f2ef; }
+.l-medio  { fill: #ede3ee; }
+.l-sombra { fill: #dccfe5; }
+.l-hondo  { fill: #c8b8d7; }
+.k-luz    { fill: #8d77a1; }
+.k-medio  { fill: #705b84; }
+.k-sombra { fill: #58466b; }
+.k-hondo  { fill: #463650; }
+.ojo      { fill: none; stroke: #fff4e6; stroke-width: 1.5; stroke-linecap: round; }
+.mejilla  { fill: #f4a3c2; opacity: .85; }
+
+
+/* ==========================================================================
+   8. NUBES Y MATITAS DE PASTO
+   ========================================================================== */
+.nube {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--ancho);
+  aspect-ratio: 120 / 50;
+  opacity: .88;
+  animation: nube-deriva var(--d, 34s) ease-in-out infinite alternate;
+}
+.nube polygon { stroke: rgba(150, 120, 190, .14); stroke-width: .5; stroke-linejoin: round; }
+.n-blanco { fill: #ffffff; }
+.n-luz    { fill: #faf6fd; }
+.n-medio  { fill: #efe7f8; }
+.n-sombra { fill: #e1d5f0; }
+@keyframes nube-deriva {
+  to { translate: 34px 0; }
+}
+
+.pasto {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  bottom: calc(var(--y) * 1%);
+  width: calc(var(--ancho-pasto) * var(--tam));
+  aspect-ratio: 40 / 26;
+  translate: -50% 0;
+}
+
+
+/* ==========================================================================
+   9. TÍTULO, PISTA Y BOTÓN
+   .centro es una columna centrada: título → sobre → pista/botón
+   ========================================================================== */
+.centro {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 3.4vh, 34px);
+  /* el padding de abajo sube todo un poco para dejar ver el jardín */
+  padding: 4vh 6vw 21vh;
+  pointer-events: none;
+}
+.centro > * { pointer-events: auto; }
+
+.encabezado {
+  text-align: center;
+  transition: opacity .6s ease 1.7s, translate .6s ease 1.7s;   /* tiempos al CERRAR */
+}
+.carta-abierta .encabezado {
+  opacity: 0;
+  translate: 0 -12px;
+  transition: opacity .35s ease, translate .35s ease;            /* tiempos al ABRIR */
+}
+
+.antetitulo {
+  margin: 0 0 .5em;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(106, 66, 160, .7);
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-weight: 500;
+  font-size: clamp(2rem, 9vw, 3.5rem);
+  line-height: 1;
+  color: var(--morado-900);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .8);
+}
+.titulo em {
+  display: block;
+  font-style: italic;
+  color: var(--morado-500);
+}
+
+/* Pista y botón ocupan el mismo lugar (grid apilado) y se turnan */
+.acciones { display: grid; place-items: center; min-height: 2.6rem; }
+.acciones > * { grid-area: 1 / 1; }
+
+.pista {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: .6em;
+  font-size: .88rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(79, 63, 92, .72);
+  animation: respirar 2.8s ease-in-out infinite;
+  transition: opacity .5s ease 2s, visibility 0s 2s;
+}
+/* Un rombito de papel doblado antes del texto */
+.pista::before {
+  content: "";
+  width: .7em;
+  height: .7em;
+  rotate: 45deg;
+  background: linear-gradient(135deg, var(--rosa-300) 50%, #de86ad 50%);
+}
+.carta-abierta .pista {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s ease, visibility 0s .3s;
+}
+@keyframes respirar {
+  0%, 100% { opacity: .55; }
+  50%      { opacity: 1; }
+}
+
+.boton-guardar {
+  font: inherit;
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--morado-700);
+  padding: .65em 1.3em;
+  border-radius: 999px;
+  border: 1px solid rgba(145, 104, 201, .35);
+  background: rgba(255, 255, 255, .7);
+  box-shadow: 0 6px 16px -8px rgba(90, 50, 130, .45);
+  cursor: pointer;
+  /* escondido mientras el sobre está cerrado */
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 8px;
+  transition: opacity .3s, translate .3s, visibility 0s .3s;
+}
+.carta-abierta .boton-guardar {
+  opacity: 1;
+  visibility: visible;
+  translate: 0 0;
+  transition: opacity .5s ease 2.2s, translate .5s ease 2.2s, visibility 0s 2.2s;
+}
+.boton-guardar:hover { background: #fff; }
+
+:focus-visible {
+  outline: 2px solid var(--morado-500);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.sobre-zona { position: relative; }
+
+/* Sombra en el "suelo", fuera del sobre para que no flote con él */
+.sobre-sombra {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -10%;
+  height: 14%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(80, 45, 110, .26), transparent);
+}
+
+.sobre {
+  position: relative;
+  width: min(84vw, 440px, 60vh);
+  aspect-ratio: 10 / 7;
+  perspective: 1100px;                  /* profundidad 3D para el giro de la solapa */
+  container-type: inline-size;          /* permite medir textos en "cqi" (% del ancho del sobre) */
+  animation: flotar-sobre 6.5s ease-in-out infinite;
+}
+.sobre.abierto { animation-play-state: paused; }   /* deja de flotar al abrirse */
+
+@keyframes flotar-sobre {
+  0%, 100% { transform: translateY(0)    rotate(-.6deg); }
+  50%      { transform: translateY(-7px) rotate(.6deg); }
+}
+
+/* Interior (parte trasera): más oscuro porque está en sombra */
+.sobre-fondo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #9a76cb, #b394dc 60%, #bfa2e2);
+  box-shadow: 0 14px 26px -14px rgba(70, 35, 105, .55);
+}
+
+/* Parte de enfrente del sobre */
+.sobre-bolsillo {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  pointer-events: none;
+  filter: drop-shadow(0 -2px 3px rgba(80, 40, 120, .16));   /* sombra sobre la carta */
+}
+.sobre-bolsillo polygon { stroke: rgba(255, 255, 255, .45); stroke-width: 1; vector-effect: non-scaling-stroke; }
+
+/* "Para [Nombre]" escrito en el sobre */
+.sobre-para {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 11%;
+  margin: 0;
+  text-align: center;
+  font-family: var(--fuente-titulo);
+  font-style: italic;
+  font-size: 18px;                      /* respaldo */
+  font-size: 6.4cqi;
+  color: rgba(71, 40, 107, .82);
+  pointer-events: none;
+}
+
+/* ---- La solapa ---- */
+.solapa {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 58%;
+  z-index: 4;
+  transform-origin: 50% 0;              /* gira desde el borde de arriba */
+  transform-style: preserve-3d;         /* sus dos caras viven en 3D */
+  transform: rotateX(0deg);
+  /* tiempos al CERRAR: espera a que la carta vuelva a entrar */
+  transition:
+    transform .75s cubic-bezier(.45, .05, .3, 1) 1.45s,
+    rotate .4s ease,
+    z-index 0s 1.8s;
+}
+.sobre.abierto .solapa {
+  transform: rotateX(180deg);
+  z-index: 1;
+  /* tiempos al ABRIR */
+  transition:
+    transform .75s cubic-bezier(.45, .05, .3, 1) 0s,
+    rotate .4s ease,
+    z-index 0s .35s;
+}
+
+/* Cada cara de la solapa se oculta cuando queda "de espaldas" */
+.solapa-cara {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.solapa-cara svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.solapa-fuera svg { filter: drop-shadow(0 3px 3px rgba(70, 35, 110, .28)); }
+.solapa-dentro { transform: rotateX(180deg); }   /* la cara interior mira hacia atrás */
+
+/* Sello: pastelito de origami en la punta de la solapa */
+.sello {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 22%;
+  aspect-ratio: 1;
+  translate: -50% -66%;
+  filter: drop-shadow(0 2px 2px rgba(120, 40, 80, .3));
+  animation: latido 3s ease-in-out infinite;
+}
+@keyframes latido {
+  0%, 30%, 100% { scale: 1; }
+  10%           { scale: 1.09; }
+  20%           { scale: 1.03; }
+}
+
+/* La llamita de la vela titila (crece y se achica desde su base) */
+.llama {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: titilar 1.6s ease-in-out infinite;
+}
+@keyframes titilar {
+  0%, 100% { transform: scale(1, 1)     rotate(0deg); }
+  30%      { transform: scale(.9, 1.12) rotate(-4deg); }
+  65%      { transform: scale(1.06, .92) rotate(3deg); }
+}
+
+/* Al pasar el mouse, la solapa se levanta un poquito (solo en compu) */
+@media (hover: hover) {
+  .sobre:not(.abierto):hover .solapa { rotate: x 14deg; }
+}
+
+/* Botón invisible encima de todo el sobre: hace que sea clicable y accesible */
+.sobre-toque {
+  position: absolute;
+  inset: -4%;
+  z-index: 10;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+}
+.sobre.abierto .sobre-toque { visibility: hidden; }
+
+/* ---- La carta ---- */
+.carta {
+  position: absolute;
+  left: 5%;
+  top: 5%;
+  width: 90%;
+  height: 90%;
+  z-index: 2;
+  padding: 7% 8% 6%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 3px;
+  /* Capas del fondo: línea del doblez en medio + textura + papel crema */
+  background:
+    linear-gradient(180deg, transparent 49.4%, rgba(120, 80, 150, .08) 50%, rgba(255, 255, 255, .8) 50.5%, transparent 52%),
+    var(--ruido-suave),
+    linear-gradient(165deg, #fffdf8 0%, #fdf6ea 100%);
+  box-shadow: 0 1px 2px rgba(80, 50, 90, .14), 0 8px 16px -10px rgba(80, 50, 90, .3);
+
+  /* Estado normal = guardada. Estos son los tiempos al CERRAR. */
+  translate: 0 0;
+  transform: none;
+  transition:
+    transform .75s cubic-bezier(.5, 0, .3, 1) 0s,
+    z-index 0s .75s,
+    translate .7s cubic-bezier(.5, 0, .3, 1) .8s,
+    box-shadow .6s ease;
+}
+.sobre.abierto .carta {
+  z-index: 6;
+  /* Paso 1: "translate" la saca del sobre hacia arriba (más que su alto) */
+  translate: 0 -108%;
+  /* Paso 2: "transform" la baja un poco y la agranda.
+     translate y transform se suman, por eso se pueden animar por separado. */
+  transform: translateY(78%) scale(1.14);
+  box-shadow: 0 2px 4px rgba(80, 50, 90, .12), 0 26px 40px -18px rgba(70, 40, 100, .45);
+  /* Tiempos al ABRIR */
+  transition:
+    translate .8s cubic-bezier(.3, .1, .25, 1) .5s,
+    z-index 0s 1.3s,
+    transform .9s cubic-bezier(.3, 0, .2, 1) 1.35s,
+    box-shadow .9s ease 1.35s;
+}
+.carta:focus { outline: none; }
+
+/* Textos de la carta. "cqi" = 1% del ancho del sobre, así el texto
+   crece y se achica junto con el sobre. El valor en px es de respaldo. */
+.carta h2 {
+  margin: 0 0 .3em;
+  font-family: var(--fuente-titulo);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 22px;
+  font-size: 7.2cqi;
+  line-height: 1.1;
+  color: var(--morado-700);
+}
+.carta p {
+  margin: 0;
+  font-size: 14px;
+  font-size: 4.15cqi;
+  line-height: 1.55;
+}
+.carta .firma {
+  margin-top: .8em;
+  text-align: right;
+  font-family: var(--fuente-titulo);
+  font-style: italic;
+  font-size: 16px;
+  font-size: 5.3cqi;
+  color: var(--morado-900);
+}
+/* Tulipancito decorativo en la esquina de la carta */
+.carta-adorno {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  width: 8.5%;
+  aspect-ratio: 1 / 2;
+  rotate: 14deg;
+  opacity: .9;
+}
+
+
+.papelitos { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+.papelito {
+  position: absolute;
+  left: var(--x0);
+  top: var(--y0);
+  width: var(--t);
+  height: var(--t);
+  /* un rombo con dos mitades de distinto tono = papel doblado */
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  background: linear-gradient(135deg, var(--c1) 50%, var(--c2) 50%);
+  opacity: 0;
+  animation: volar 2.8s cubic-bezier(.2, .6, .3, 1) forwards;
+}
+@keyframes volar {
+  0%   { transform: translate(-50%, -50%) rotate(0deg) scale(.4); opacity: 0; }
+  12%  { opacity: 1; }
+  60%  { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--giro)) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx) * 1.15), calc(-50% + var(--dy) + 70px)) rotate(calc(var(--giro) * 1.6)) scale(.9); opacity: 0; }
+}
+
+
+/* ==========================================================================
+   12. ADAPTACIÓN A PANTALLAS
+   El diseño parte del celular en vertical. Aquí ajustamos lo demás.
+   ========================================================================== */
+
+/* Figuras extra que solo aparecen en pantallas anchas */
+.solo-grande { display: none; }
+
+@media (min-width: 720px) {
+  .solo-grande { display: block; }
+  :root {
+    --alto-tulipan: clamp(110px, 25vh, 250px);
+    --ancho-oveja:  clamp(110px, 11vw, 170px);
+  }
+  .antetitulo { font-size: .85rem; }
+  .colina-lejana { height: 43vh; }
+  .colina-media  { height: 36vh; }
+  .colina-cerca  { height: 27vh; }
+  .centro { padding-bottom: 25vh; }
+  .pista { font-size: .95rem; }
+}
+
+/* Celular acostado o pantallas muy bajitas */
+@media (max-height: 560px) and (orientation: landscape) {
+  .centro { padding-bottom: 8vh; gap: 10px; }
+  .antetitulo { display: none; }
+  .titulo { font-size: 1.7rem; }
+  .titulo em { display: inline; }
+  .colina-lejana { height: 40vh; }
+  .colina-media  { height: 32vh; }
+  .colina-cerca  { height: 22vh; }
+  :root {
+    --alto-tulipan: clamp(60px, 22vh, 120px);
+    --ancho-oveja:  clamp(56px, 17vh, 100px);
+    --ancho-grulla: clamp(48px, 15vh, 90px);
+  }
+}
+
+
+/* ==========================================================================
+   13. MOVIMIENTO REDUCIDO
+   Si la persona pidió en su sistema "reducir movimiento", quitamos las
+   animaciones de ambiente y el sobre se abre sin recorridos: la carta
+   simplemente aparece con un fundido suave.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .tulipan > svg, .grulla .flotador, .grulla .ala,
+  .oveja-salto, .oveja-sombra, .luces span, .nube,
+  .sobre, .sello, .llama, .pista {
+    animation: none !important;
+  }
+  .solapa, .encabezado, .pista, .boton-guardar {
+    transition: none !important;
+  }
+  .carta {
+    opacity: 0;
+    transition: opacity .5s ease !important;
+  }
+  .sobre.abierto .carta { opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+<!-- ======================================================================
+     DEFINICIONES COMPARTIDAS
+     Degradados y filtros que usan varias figuras. Se referencian con
+     url(#nombre). Este SVG mide 0x0: no se ve, pero sus "defs" sí existen.
+     ====================================================================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- Sombra que se oscurece hacia abajo (fondo de un doblez) -->
+    <linearGradient id="g-pliegue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1238" stop-opacity="0"/>
+      <stop offset="1" stop-color="#2a1238" stop-opacity=".24"/>
+    </linearGradient>
+    <!-- Sombra que se oscurece hacia la derecha -->
+    <linearGradient id="g-pliegue-lado" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2a1238" stop-opacity="0"/>
+      <stop offset="1" stop-color="#2a1238" stop-opacity=".2"/>
+    </linearGradient>
+    <!-- Sombrita redonda en el suelo -->
+    <radialGradient id="g-suelo">
+      <stop offset="0" stop-color="#3b2a1a" stop-opacity=".26"/>
+      <stop offset="1" stop-color="#3b2a1a" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Neblina blanca que hace ver lejos las colinas -->
+    <linearGradient id="g-niebla" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8f2" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff8f2" stop-opacity=".7"/>
+    </linearGradient>
+    <!-- Puntitos del forro interior del sobre -->
+    <pattern id="p-forro" width="5" height="5" patternUnits="userSpaceOnUse">
+      <circle cx="2.5" cy="2.5" r=".8" fill="#e9b7cf"/>
+    </pattern>
+    <!-- Sombra suave que proyecta el triángulo de abajo del sobre -->
+    <filter id="f-sombra-papel" x="-10%" y="-20%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="-.6" stdDeviation=".9" flood-color="#4f2d72" flood-opacity=".28"/>
+    </filter>
+  </defs>
+</svg>
+
+
+<!-- ======================================================================
+     PLANTILLAS DE LAS FIGURAS
+     Un <template> no se muestra: es un molde. JavaScript lo copia tantas
+     veces como figuras haya en el jardín.
+     Recuerda: c-luz = cara más iluminada ... c-hondo = cara más oscura.
+     ====================================================================== -->
+
+<!-- TULIPÁN (lienzo de 100 x 200) -->
+<template id="plantilla-tulipan">
+  <svg class="origami" viewBox="0 0 100 200" aria-hidden="true">
+    <!-- sombrita en el suelo -->
+    <ellipse cx="50" cy="197" rx="20" ry="3.5" fill="url(#g-suelo)"/>
+
+    <!-- tallo: dos caras, una con luz y otra en sombra -->
+    <polygon class="v-luz"    points="48.4,76 50,76 50,197 48.4,197"/>
+    <polygon class="v-sombra" points="50,76 51.6,76 51.6,197 50,197"/>
+
+    <!-- hoja derecha: doblada por la mitad (nervio central) -->
+    <polygon class="v-luz"    points="51,182 60,146 84,116"/>
+    <polygon class="v-sombra" points="51,182 84,116 75,155"/>
+    <line class="pliegue" x1="51" y1="182" x2="84" y2="116"/>
+
+    <!-- hoja izquierda, más pequeña -->
+    <polygon class="v-luz"   points="49,188 30,167 22,138"/>
+    <polygon class="v-medio" points="49,188 22,138 41,161"/>
+    <line class="pliegue" x1="49" y1="188" x2="22" y2="138"/>
+
+    <!-- FLOR -->
+    <!-- pétalo de atrás (se ve entre los dos de adelante): está más en sombra -->
+    <polygon class="c-sombra" points="50,8 50,46 38,34"/>
+    <polygon class="c-hondo"  points="50,8 62,34 50,46"/>
+    <!-- costado izquierdo de la flor -->
+    <polygon class="c-medio"  points="24,18 25,48 34,68 50,80"/>
+    <!-- cara frontal izquierda: la que más luz recibe -->
+    <polygon class="c-luz"    points="24,18 38,34 50,46 50,80"/>
+    <!-- cara frontal derecha -->
+    <polygon class="c-medio"  points="76,18 62,34 50,46 50,80"/>
+    <!-- costado derecho: el más oscuro -->
+    <polygon class="c-sombra" points="76,18 75,48 66,68 50,80"/>
+
+    <!-- sombra suave donde se juntan los dos pétalos de adelante -->
+    <polygon class="sombra-lado"  points="42,52 50,46 50,80"/>
+    <!-- sombra en la base de la flor -->
+    <polygon class="sombra-suave" points="30,58 50,46 70,58 50,80"/>
+
+    <!-- dobleces y aristas -->
+    <line class="pliegue" x1="24" y1="18" x2="50" y2="80"/>
+    <line class="pliegue" x1="76" y1="18" x2="50" y2="80"/>
+    <line class="pliegue" x1="50" y1="46" x2="50" y2="80"/>
+    <polyline class="brillo" points="24,18 38,34 50,46"/>
+    <line class="brillo" x1="50" y1="8" x2="50" y2="40" opacity=".45"/>
+  </svg>
+</template>
+
+<!-- GRULLA (lienzo de 160 x 110), mirando a la izquierda -->
+<template id="plantilla-grulla">
+  <svg class="origami" viewBox="0 0 160 110" aria-hidden="true">
+    <!-- ala de atrás (queda detrás del cuerpo, por eso es más oscura) -->
+    <g class="ala ala-atras">
+      <polygon class="c-sombra" points="64,63 78,62 52,6"/>
+      <polygon class="c-hondo"  points="78,62 92,61 52,6"/>
+      <line class="pliegue" x1="78" y1="62" x2="52" y2="6"/>
+    </g>
+
+    <!-- cola: punta larga hacia arriba a la derecha -->
+    <polygon class="c-luz"    points="100,63 105,67 150,22"/>
+    <polygon class="c-sombra" points="105,67 110,71 150,22"/>
+
+    <!-- cuello y cabeza -->
+    <polygon class="c-luz"    points="57,69 62,73 24,28"/>
+    <polygon class="c-sombra" points="62,73 67,78 24,28"/>
+    <polygon class="c-luz"    points="19,24 31,31 21,31"/>
+    <polygon class="c-sombra" points="21,31 31,31 8,39"/>
+
+    <!-- cuerpo: un rombo con cuatro caras -->
+    <polygon class="c-luz"    points="56,70 82,60 82,73"/>
+    <polygon class="c-medio"  points="82,60 108,68 82,73"/>
+    <polygon class="c-sombra" points="56,70 82,73 84,88"/>
+    <polygon class="c-hondo"  points="82,73 108,68 84,88"/>
+    <polygon class="sombra-suave" points="56,70 108,68 84,88"/>
+
+    <!-- ala de adelante -->
+    <g class="ala ala-frente">
+      <polygon class="c-luz"   points="68,66 85,65 116,4"/>
+      <polygon class="c-medio" points="85,65 101,65 116,4"/>
+      <polygon class="sombra-suave" points="68,66 101,65 92,44" opacity=".8"/>
+      <line class="pliegue" x1="85" y1="65" x2="116" y2="4"/>
+      <line class="brillo"  x1="68" y1="66" x2="116" y2="4"/>
+    </g>
+  </svg>
+</template>
+
+<!-- OVEJA (lienzo de 140 x 104), mirando a la izquierda.
+     La lana es una "bola" de 24 triángulos: los de arriba-izquierda
+     son más claros porque la luz viene de ahí. -->
+<template id="plantilla-oveja">
+  <svg class="origami" viewBox="0 0 140 104" aria-hidden="true">
+    <!-- patas de atrás (más lejos = más oscuras) -->
+    <polygon class="k-sombra" points="56,70 63,70 62,98 57,98"/>
+    <polygon class="k-hondo"  points="110,70 117,70 116,98 111,98"/>
+    <!-- patas de adelante -->
+    <polygon class="k-medio"  points="44,70 47.5,70 47.5,98 45,98"/>
+    <polygon class="k-sombra" points="47.5,70 51,70 50,98 47.5,98"/>
+    <polygon class="k-medio"  points="98,70 101.5,70 101.5,98 99,98"/>
+    <polygon class="k-sombra" points="101.5,70 105,70 104,98 101.5,98"/>
+
+    <!-- colita -->
+    <polygon class="l-luz"    points="124,38 138,34 131,50"/>
+    <polygon class="l-sombra" points="124,38 131,50 122,48"/>
+
+    <!-- LANA: anillo exterior -->
+    <polygon class="l-medio"  points="52,44 34,66 30,46"/>
+    <polygon class="l-luz"    points="52,44 30,46 40,28"/>
+    <polygon class="l-blanco" points="52,44 40,28 68,30"/>
+    <polygon class="l-luz"    points="68,30 40,28 58,18"/>
+    <polygon class="l-blanco" points="68,30 58,18 80,14"/>
+    <polygon class="l-luz"    points="68,30 80,14 92,30"/>
+    <polygon class="l-blanco" points="92,30 80,14 102,18"/>
+    <polygon class="l-medio"  points="92,30 102,18 118,28"/>
+    <polygon class="l-medio"  points="92,30 118,28 110,46"/>
+    <polygon class="l-sombra" points="110,46 118,28 128,46"/>
+    <polygon class="l-sombra" points="110,46 128,46 122,64"/>
+    <polygon class="l-sombra" points="110,46 122,64 96,64"/>
+    <polygon class="l-hondo"  points="96,64 122,64 104,78"/>
+    <polygon class="l-sombra" points="96,64 104,78 78,82"/>
+    <polygon class="l-sombra" points="96,64 78,82 62,64"/>
+    <polygon class="l-hondo"  points="62,64 78,82 52,78"/>
+    <polygon class="l-sombra" points="62,64 52,78 34,66"/>
+    <polygon class="l-medio"  points="62,64 34,66 52,44"/>
+    <!-- LANA: centro (la parte más abultada) -->
+    <polygon class="l-blanco" points="78,47 52,44 68,30"/>
+    <polygon class="l-luz"    points="78,47 68,30 92,30"/>
+    <polygon class="l-luz"    points="78,47 92,30 110,46"/>
+    <polygon class="l-medio"  points="78,47 110,46 96,64"/>
+    <polygon class="l-medio"  points="78,47 96,64 62,64"/>
+    <polygon class="l-luz"    points="78,47 62,64 52,44"/>
+
+    <!-- orejas -->
+    <polygon class="k-sombra" points="13,40 1,50 15,48"/>
+    <polygon class="k-sombra" points="37,36 50,42 39,46"/>
+
+    <!-- cara: dos caras dobladas por el centro -->
+    <polygon class="k-luz"   points="10,36 26,33 24,70 18,62"/>
+    <polygon class="k-medio" points="26,33 42,34 32,62 24,70"/>
+    <line class="pliegue" x1="26" y1="33" x2="24" y2="70" style="stroke:rgba(30,15,40,.3)"/>
+
+    <!-- copete de lana en la frente -->
+    <polygon class="l-blanco" points="12,36 26,27 26,42"/>
+    <polygon class="l-luz"    points="26,27 41,33 26,42"/>
+
+    <!-- carita tierna: ojitos cerrados, mejillas y naricita -->
+    <path class="ojo" d="M15.5 49.5 q2.6 -2.6 5.2 0"/>
+    <path class="ojo" d="M27.5 49 q2.6 -2.6 5.2 0"/>
+    <ellipse class="mejilla" cx="18.8" cy="55.5" rx="2.4" ry="1.5"/>
+    <ellipse class="mejilla" cx="31" cy="55" rx="2.4" ry="1.5"/>
+    <polygon points="22.6,59.5 26.4,59.3 24.6,61.8" fill="#f4a3c2" style="stroke:none"/>
+  </svg>
+</template>
+
+<!-- MATITA DE PASTO (lienzo de 40 x 26) -->
+<template id="plantilla-pasto">
+  <svg class="origami" viewBox="0 0 40 26" aria-hidden="true">
+    <polygon class="v-luz"    points="4,26 10,7 9,26"/>
+    <polygon class="v-sombra" points="9,26 10,7 15,26"/>
+    <polygon class="v-luz"    points="13,26 20,1 19,26"/>
+    <polygon class="v-medio"  points="19,26 20,1 27,26"/>
+    <polygon class="v-luz"    points="25,26 33,10 31,26"/>
+    <polygon class="v-sombra" points="31,26 33,10 37,26"/>
+  </svg>
+</template>
+
+<!-- NUBE (lienzo de 120 x 50) -->
+<template id="plantilla-nube">
+  <svg class="origami" viewBox="0 0 120 50" aria-hidden="true">
+    <polygon class="n-medio"  points="6,44 14,30 28,44"/>
+    <polygon class="n-luz"    points="14,30 28,24 28,44"/>
+    <polygon class="n-medio"  points="28,24 52,44 28,44"/>
+    <polygon class="n-blanco" points="28,24 36,12 52,44"/>
+    <polygon class="n-luz"    points="36,12 54,6 52,44"/>
+    <polygon class="n-blanco" points="54,6 70,12 52,44"/>
+    <polygon class="n-luz"    points="70,12 76,44 52,44"/>
+    <polygon class="n-medio"  points="70,12 80,22 76,44"/>
+    <polygon class="n-medio"  points="80,22 96,44 76,44"/>
+    <polygon class="n-luz"    points="80,22 96,20 96,44"/>
+    <polygon class="n-blanco" points="96,20 110,30 96,44"/>
+    <polygon class="n-sombra" points="110,30 116,44 96,44"/>
+  </svg>
+</template>
+
+
+<!-- ======================================================================
+     LA ESCENA
+     ====================================================================== -->
+<main class="escena">
+
+  <!-- Luces suaves del fondo -->
+  <div class="luces" aria-hidden="true">
+    <span style="--x:8%;  --y:14%; --t:120px; --c:rgba(255,236,170,.75); --d:19s"></span>
+    <span style="--x:70%; --y:6%;  --t:160px; --c:rgba(255,226,150,.6);  --d:23s"></span>
+    <span style="--x:80%; --y:40%; --t:90px;  --c:rgba(244,169,198,.45); --d:17s"></span>
+    <span style="--x:4%;  --y:48%; --t:110px; --c:rgba(205,182,234,.55); --d:21s"></span>
+    <span style="--x:46%; --y:2%;  --t:80px;  --c:rgba(255,255,255,.8);  --d:15s"></span>
+    <span style="--x:30%; --y:58%; --t:70px;  --c:rgba(255,236,170,.5);  --d:25s"></span>
+  </div>
+
+  <!-- Nubes de papel (JavaScript les pone el dibujo) -->
+  <div class="capa-nubes" aria-hidden="true">
+    <div class="nube" style="--x:-4%; --y:7%;  --ancho:clamp(90px, 28vw, 220px); --d:38s"></div>
+    <div class="nube" style="--x:66%; --y:22%; --ancho:clamp(70px, 20vw, 160px); --d:30s"></div>
+  </div>
+
+  <!-- Colina lejana (lila) -->
+  <svg class="colina colina-lejana" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
+    <polygon fill="#ddd1ee" points="0,62 60,34 74,200 0,200"/>
+    <polygon fill="#cdbde4" points="60,34 110,54 124,200 74,200"/>
+    <polygon fill="#ddd1ee" points="110,54 170,24 186,200 124,200"/>
+    <polygon fill="#cbbbe2" points="170,24 225,50 238,200 186,200"/>
+    <polygon fill="#dbcfed" points="225,50 290,30 304,200 238,200"/>
+    <polygon fill="#ccbce3" points="290,30 345,52 356,200 304,200"/>
+    <polygon fill="#ddd1ee" points="345,52 400,36 400,200 356,200"/>
+    <rect x="0" y="40" width="400" height="160" fill="url(#g-niebla)"/>
+  </svg>
+
+  <!-- Las grullas van entre el cielo y las colinas -->
+  <div class="capa-aves" id="capa-aves" aria-hidden="true"></div>
+
+  <!-- Colina media (verde apagado) -->
+  <svg class="colina colina-media" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
+    <polygon fill="#c6dfb0" points="0,78 80,52 92,200 0,200"/>
+    <polygon fill="#b0d09a" points="80,52 150,70 162,200 92,200"/>
+    <polygon fill="#c3ddad" points="150,70 230,46 244,200 162,200"/>
+    <polygon fill="#adce97" points="230,46 300,66 312,200 244,200"/>
+    <polygon fill="#c4ddae" points="300,66 360,50 372,200 312,200"/>
+    <polygon fill="#b0d09a" points="360,50 400,60 400,200 372,200"/>
+    <rect x="0" y="90" width="400" height="110" fill="url(#g-niebla)" opacity=".5"/>
+  </svg>
+
+  <!-- Colina cercana (verde pasto, la más viva).
+       Arriba una fila de triángulos; abajo, caras más grandes. -->
+  <svg class="colina colina-cerca" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
+    <polygon fill="#88bf71" points="0,140 400,140 400,200 0,200"/>
+    <!-- fila de arriba -->
+    <polygon fill="#a8d58b" points="0,116 80,94 40,146"/>
+    <polygon fill="#94c87b" points="80,94 160,110 120,150"/>
+    <polygon fill="#a6d38a" points="160,110 240,88 200,144"/>
+    <polygon fill="#94c87b" points="240,88 320,104 280,150"/>
+    <polygon fill="#a8d58b" points="320,104 400,92 360,146"/>
+    <polygon fill="#9bcd81" points="80,94 40,146 120,150"/>
+    <polygon fill="#80b76b" points="160,110 120,150 200,144"/>
+    <polygon fill="#9bcd81" points="240,88 200,144 280,150"/>
+    <polygon fill="#80b76b" points="320,104 280,150 360,146"/>
+    <polygon fill="#94c87b" points="0,116 40,146 0,148"/>
+    <polygon fill="#80b76b" points="400,92 360,146 400,148"/>
+    <!-- fila de abajo -->
+    <polygon fill="#8fc477" points="0,148 40,146 0,200"/>
+    <polygon fill="#97ca7e" points="40,146 120,150 70,200 0,200"/>
+    <polygon fill="#85bc6e" points="120,150 200,144 170,200 70,200"/>
+    <polygon fill="#93c77a" points="200,144 280,150 260,200 170,200"/>
+    <polygon fill="#83ba6c" points="280,150 360,146 340,200 260,200"/>
+    <polygon fill="#90c578" points="360,146 400,148 400,200 340,200"/>
+  </svg>
+
+  <!-- Tulipanes, ovejas y pasto (los crea JavaScript) -->
+  <div class="capa-jardin" id="capa-jardin" aria-hidden="true"></div>
+
+
+  <!-- ===================== CENTRO: título + sobre ===================== -->
+  <div class="centro">
+
+    <header class="encabezado">
+      <h1 class="titulo">FELIZ CUMPLEAÑOS<em>JULI</em></h1>
+    </header>
+
+    <div class="sobre-zona">
+      <div class="sobre-sombra" aria-hidden="true"></div>
+
+      <div class="sobre" id="sobre">
+        <!-- 1. Interior -->
+        <div class="sobre-fondo"></div>
+
+        <article class="carta" id="carta" tabindex="-1" aria-hidden="true" aria-labelledby="carta-titulo">
+          <div class="carta-adorno" id="carta-adorno" aria-hidden="true"></div>
+          <h2 id="carta-titulo">Querida Juli</h2>
+          <p>
+            ¡Feliz cumpleaños, Juli! No soy muy bueno con las palabras en momentos importantes, 
+            pero te lo digo de corazón: espero que hoy la pases muy bonito y que seas muy feliz en tu día.
+          </p>
+          <p class="firma">Con cariño, Leonardo</p>
+        </article>
+
+        <!-- 3. Parte de enfrente: triángulo izquierdo, derecho y el de abajo -->
+        <svg class="sobre-bolsillo" viewBox="0 0 100 70" preserveAspectRatio="none" aria-hidden="true">
+          <polygon points="0,0 52,39 0,70"    fill="#d7c3ee"/>
+          <polygon points="100,0 48,39 100,70" fill="#c8b0e6"/>
+          <polygon points="0,70 50,33 100,70" fill="#e5d8f5" filter="url(#f-sombra-papel)"/>
+        </svg>
+
+        <!-- 4. La solapa, con su cara de afuera y su cara de adentro (forro) -->
+        <div class="solapa">
+          <div class="solapa-cara solapa-fuera">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+              <polygon points="0,0 50,0 50,40"   fill="#c6a9ea"/>
+              <polygon points="50,0 100,0 50,40" fill="#b18edd"/>
+              <line x1="50" y1="0" x2="50" y2="40" stroke="rgba(60,30,90,.18)" stroke-width=".4"/>
+              <line x1="0" y1="0" x2="50" y2="40" stroke="rgba(255,255,255,.55)" stroke-width=".5"/>
+            </svg>
+            <!-- Sello: pastelito de origami (lienzo de 100 x 100).
+                 Igual que las demás figuras: cada parte tiene una cara
+                 con luz (izquierda) y otra en sombra (derecha). -->
+            <div class="sello">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <!-- platito -->
+                <polygon points="6,92 50,92 50,98 12,98"  fill="#fffaf2"/>
+                <polygon points="50,92 94,92 88,98 50,98" fill="#eadff0"/>
+
+                <!-- piso de abajo (rosa) -->
+                <polygon points="22,54 78,54 86,60 14,60" fill="#fff3e6"/>   <!-- superficie -->
+                <polygon points="14,60 50,60 50,92 14,92" fill="#f9c6d8"/>
+                <polygon points="50,60 86,60 86,92 50,92" fill="#e99abb"/>
+                <!-- crema que chorrea -->
+                <polygon points="14,60 50,60 50,70 42,64 34,71 26,64 20,70 14,66" fill="#fffaf2"/>
+                <polygon points="50,60 86,60 86,66 80,70 74,64 66,71 58,64 50,70" fill="#f1e6ee"/>
+                <!-- chispitas de colores -->
+                <polygon points="24,78 27,76 28,79 25,81" fill="#9c72d2"/>
+                <polygon points="37,84 40,82 41,85 38,87" fill="#efc66c"/>
+                <polygon points="62,79 65,77 66,80 63,82" fill="#9c72d2"/>
+                <polygon points="74,85 77,83 78,86 75,88" fill="#fff5c9"/>
+
+                <!-- piso de arriba (lila) -->
+                <polygon points="34,29 66,29 72,34 28,34" fill="#fff3e6"/>   <!-- superficie -->
+                <polygon points="28,34 50,34 50,56 28,56" fill="#d5bff1"/>
+                <polygon points="50,34 72,34 72,56 50,56" fill="#b69bdf"/>
+                <polygon points="28,34 50,34 50,40 46,44 40,38 34,43 28,39" fill="#fffaf2"/>
+                <polygon points="50,34 72,34 72,39 66,43 60,38 54,43 50,40" fill="#f1e6ee"/>
+
+                <!-- velita y su llama -->
+                <polygon points="47,13 50,13 50,31 47,31" fill="#fff5c9"/>
+                <polygon points="50,13 53,13 53,31 50,31" fill="#efc66c"/>
+                <g class="llama">
+                  <polygon points="50,1 50,13 46,9" fill="#ffd36b"/>
+                  <polygon points="50,1 54,9 50,13" fill="#f5a742"/>
+                </g>
+
+                <!-- dobleces -->
+                <line x1="50" y1="34" x2="50" y2="92" stroke="rgba(90,30,70,.18)" stroke-width="1"/>
+              </svg>
+            </div>
+          </div>
+          <div class="solapa-cara solapa-dentro">
+            <!-- dibujado "de cabeza" porque esta cara está girada 180° -->
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+              <polygon points="0,40 100,40 50,0" fill="#fbe9f0"/>
+              <polygon points="0,40 100,40 50,0" fill="url(#p-forro)"/>
+              <polygon points="0,40 50,40 50,0" fill="rgba(80,40,110,.06)"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Botón invisible que abre el sobre (funciona con mouse, dedo y teclado) -->
+        <button class="sobre-toque" id="sobre-toque" type="button"
+                aria-label="Abrir el sobre" aria-expanded="false" aria-controls="carta"></button>
+      </div>
+    </div>
+
+    <div class="acciones">
+      <p class="pista" aria-hidden="true">Toca el sobre</p>
+      <button class="boton-guardar" id="boton-guardar" type="button">Guardar la carta</button>
+    </div>
+  </div>
+
+  <!-- Aquí aparecen los papelitos al abrir -->
+  <div class="papelitos" id="papelitos" aria-hidden="true"></div>
+</main>
+
+
+<script>
+(() => {
+  'use strict';
+
+  // ¿La persona pidió "reducir movimiento" en su sistema?
+  const reducirMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ------------------------------------------------------------------------
+     1. PALETAS
+     Cada color tiene 4 tonos: de la cara más iluminada a la más oscura.
+     ------------------------------------------------------------------------ */
+  const PALETAS = {
+    rosa:     { luz: '#fcd3e2', medio: '#f5aac8', sombra: '#e086ad', hondo: '#bf6290' },
+    morado:   { luz: '#c3a2ea', medio: '#9c72d2', sombra: '#7a50b3', hondo: '#5a358b' },
+    lila:     { luz: '#eee3fa', medio: '#d5bff1', sombra: '#b69bdf', hondo: '#9477c5' },
+    amarillo: { luz: '#fff5c9', medio: '#fbe19a', sombra: '#efc66c', hondo: '#cfa04b' },
+  };
+
+  const TULIPANES = [
+    // fila de atrás: más pequeños y más arriba (parecen lejos)
+    { x: 5,  y: 15, tam: .55, color: 'lila' },
+    { x: 19, y: 17, tam: .48, color: 'amarillo' },
+    { x: 33, y: 16, tam: .5,  color: 'morado', soloGrande: true },
+    { x: 55, y: 17, tam: .5,  color: 'rosa' },
+    { x: 71, y: 15, tam: .6,  color: 'morado' },
+    { x: 86, y: 16, tam: .5,  color: 'rosa' },
+    { x: 96, y: 14, tam: .58, color: 'amarillo', soloGrande: true },
+    // fila del medio
+    { x: 41, y: 10, tam: .68, color: 'rosa', soloGrande: true },
+    { x: 63, y: 9,  tam: .72, color: 'lila', soloGrande: true },
+    // fila de adelante: más grandes
+    { x: 2,  y: 2,  tam: 1.05, color: 'morado' },
+    { x: 15, y: 5,  tam: .78,  color: 'rosa' },
+    { x: 24, y: 0,  tam: 1.18, color: 'amarillo' },
+    { x: 47, y: 3,  tam: .86,  color: 'lila' },
+    { x: 61, y: 0,  tam: 1.1,  color: 'rosa' },
+    { x: 85, y: 4,  tam: .9,   color: 'morado' },
+    { x: 96, y: 1,  tam: 1.14, color: 'rosa' },
+    { x: 33, y: 6,  tam: .7,   color: 'morado', soloGrande: true },
+    { x: 77, y: 8,  tam: .7,   color: 'amarillo', soloGrande: true },
+  ];
+
+  const OVEJAS = [
+    { x: 40, y: 6,  tam: 1 },
+    { x: 69, y: 9,  tam: .82, miraDerecha: true },
+    { x: 12, y: 12, tam: .6,  miraDerecha: true, soloGrande: true },
+  ];
+
+  const GRULLAS = [
+    { x: 16, y: 10, tam: 1,   color: 'rosa' },
+    { x: 84, y: 7,  tam: .78, color: 'lila', miraDerecha: true },
+    { x: 90, y: 33, tam: .62, color: 'amarillo' },
+    { x: 8,  y: 38, tam: .58, color: 'morado', miraDerecha: true, soloGrande: true },
+  ];
+
+  const PASTO = [
+    { x: 8,  y: 1,  tam: 1 },  { x: 22, y: 8,  tam: .8 },
+    { x: 44, y: 1,  tam: 1.1 },{ x: 54, y: 9,  tam: .7 },
+    { x: 70, y: 2,  tam: .9 }, { x: 87, y: 10, tam: .7 },
+    { x: 99, y: 4,  tam: .9 }, { x: 30, y: 14, tam: .6 },
+  ];
+
+  const capaJardin = document.getElementById('capa-jardin');
+  const capaAves   = document.getElementById('capa-aves');
+
+  // Número al azar entre min y max (para que no todo se mueva igual)
+  const azar = (min, max) => min + Math.random() * (max - min);
+
+  // Copia el SVG de una plantilla <template>
+  function copiarPlantilla(id) {
+    return document.getElementById(id).content.firstElementChild.cloneNode(true);
+  }
+
+  // Pone los 4 tonos de una paleta como variables CSS (--luz, --medio...)
+  function pintar(elemento, nombrePaleta) {
+    const paleta = PALETAS[nombrePaleta];
+    for (const tono in paleta) {
+      elemento.style.setProperty('--' + tono, paleta[tono]);
+    }
+  }
+
+  // Crea el div de una figura con su posición, tamaño y ritmo propio
+  function crearFigura(clase, datos, duracionMin, duracionMax) {
+    const div = document.createElement('div');
+    div.className = clase;
+    if (datos.soloGrande)  div.classList.add('solo-grande');
+    if (datos.miraDerecha) div.classList.add('mira-derecha');
+    div.style.setProperty('--x', datos.x);
+    div.style.setProperty('--y', datos.y);
+    div.style.setProperty('--tam', datos.tam ?? 1);
+    div.style.setProperty('--dur', azar(duracionMin, duracionMax).toFixed(2) + 's');
+    // retraso negativo = la animación ya "va empezada", así no arrancan todas juntas
+    div.style.setProperty('--retraso', (-azar(0, duracionMax)).toFixed(2) + 's');
+    return div;
+  }
+
+  // Lo que está más abajo en la pantalla queda delante (z-index mayor)
+  const profundidad = (y) => 100 - Math.round(y * 3);
+
+  TULIPANES.forEach((t) => {
+    const div = crearFigura('tulipan', t, 5, 8.5);
+    if (t.y >= 12) div.classList.add('lejos');
+    div.style.zIndex = profundidad(t.y);
+    pintar(div, t.color);
+    div.appendChild(copiarPlantilla('plantilla-tulipan'));
+    capaJardin.appendChild(div);
+  });
+
+  OVEJAS.forEach((o) => {
+    const div = crearFigura('oveja', o, 4.5, 6.5);
+    div.style.zIndex = profundidad(o.y);
+    const sombra = document.createElement('div');
+    sombra.className = 'oveja-sombra';
+    const salto = document.createElement('div');
+    salto.className = 'oveja-salto';
+    salto.appendChild(copiarPlantilla('plantilla-oveja'));
+    div.append(sombra, salto);
+    capaJardin.appendChild(div);
+  });
+
+  PASTO.forEach((p) => {
+    const div = crearFigura('pasto', p, 1, 1);
+    div.style.zIndex = profundidad(p.y) - 1;
+    div.appendChild(copiarPlantilla('plantilla-pasto'));
+    capaJardin.appendChild(div);
+  });
+
+  GRULLAS.forEach((g) => {
+    const div = crearFigura('grulla', g, 7, 10);
+    pintar(div, g.color);
+    const flotador = document.createElement('div');
+    flotador.className = 'flotador';
+    flotador.appendChild(copiarPlantilla('plantilla-grulla'));
+    div.appendChild(flotador);
+    capaAves.appendChild(div);
+  });
+
+  document.querySelectorAll('.nube').forEach((nube) => {
+    nube.appendChild(copiarPlantilla('plantilla-nube'));
+  });
+
+  // Tulipancito morado dentro de la carta
+  const adorno = document.getElementById('carta-adorno');
+  pintar(adorno, 'morado');
+  adorno.appendChild(copiarPlantilla('plantilla-tulipan'));
+
+  const sobre        = document.getElementById('sobre');
+  const toque        = document.getElementById('sobre-toque');
+  const carta        = document.getElementById('carta');
+  const botonGuardar = document.getElementById('boton-guardar');
+
+  // Duración total de la apertura en milisegundos (debe coincidir con el CSS)
+  const DURACION_APERTURA = 2250;
+
+  function abrirSobre() {
+    if (sobre.classList.contains('abierto')) return;
+    sobre.classList.add('abierto');
+    document.body.classList.add('carta-abierta');
+    toque.setAttribute('aria-expanded', 'true');
+    carta.setAttribute('aria-hidden', 'false');
+
+    if (!reducirMovimiento) setTimeout(lanzarPapelitos, 420);
+
+    // Cuando termina la animación, el foco pasa a la carta (útil con lector de pantalla)
+    setTimeout(() => carta.focus({ preventScroll: true }),
+               reducirMovimiento ? 50 : DURACION_APERTURA);
+  }
+
+  function cerrarSobre() {
+    if (!sobre.classList.contains('abierto')) return;
+    sobre.classList.remove('abierto');
+    document.body.classList.remove('carta-abierta');
+    toque.setAttribute('aria-expanded', 'false');
+    carta.setAttribute('aria-hidden', 'true');
+    toque.focus({ preventScroll: true });
+  }
+
+  toque.addEventListener('click', abrirSobre);
+  botonGuardar.addEventListener('click', cerrarSobre);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') cerrarSobre();
+  });
+
+  /* ------------------------------------------------------------------------
+     5. PAPELITOS
+     Pequeños rombos de papel que salen volando del sobre al abrirlo.
+     ------------------------------------------------------------------------ */
+  const capaPapelitos = document.getElementById('papelitos');
+  const COLORES_PAPELITOS = [
+    ['#f5aac8', '#e086ad'], ['#d5bff1', '#b69bdf'], ['#fbe19a', '#efc66c'],
+    ['#c3a2ea', '#9c72d2'], ['#b6dc98', '#91c47b'],
+  ];
+
+  function lanzarPapelitos() {
+    const caja = sobre.getBoundingClientRect();
+    const centroX = caja.left + caja.width / 2;
+    const centroY = caja.top + caja.height * 0.3;
+
+    for (let i = 0; i < 18; i++) {
+      const papel = document.createElement('span');
+      papel.className = 'papelito';
+      const [c1, c2] = COLORES_PAPELITOS[i % COLORES_PAPELITOS.length];
+      const angulo = azar(-165, -15) * Math.PI / 180;      // hacia arriba
+      const distancia = azar(caja.width * 0.4, caja.width * 1.05);
+
+      papel.style.setProperty('--x0', centroX + 'px');
+      papel.style.setProperty('--y0', centroY + 'px');
+      papel.style.setProperty('--dx', (Math.cos(angulo) * distancia).toFixed(1) + 'px');
+      papel.style.setProperty('--dy', (Math.sin(angulo) * distancia).toFixed(1) + 'px');
+      papel.style.setProperty('--giro', azar(-240, 240).toFixed(0) + 'deg');
+      papel.style.setProperty('--t', azar(8, 15).toFixed(1) + 'px');
+      papel.style.setProperty('--c1', c1);
+      papel.style.setProperty('--c2', c2);
+      papel.style.animationDelay = azar(0, 0.35).toFixed(2) + 's';
+      papel.style.animationDuration = azar(2.3, 3.3).toFixed(2) + 's';
+
+      papel.addEventListener('animationend', () => papel.remove());
+      capaPapelitos.appendChild(papel);
+    }
+  }
+})();
+</script>
+</body>
+</html>
