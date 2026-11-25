@@ -8,7 +8,6 @@
 
 <style>
 :root {
-  /* Morado: el color principal */
   --morado-900: #47286b;
   --morado-700: #6a42a0;
   --morado-500: #9168c9;
@@ -48,11 +47,10 @@ body {
   font-family: var(--fuente-texto);
   color: var(--tinta);
   background: var(--lila-100);
-  overflow: hidden;                       /* la escena ocupa justo la pantalla */
+  overflow: hidden;  
   -webkit-tap-highlight-color: transparent;
 }
 
-/* La escena es el "escenario" donde vive todo. */
 .escena {
   position: relative;
   width: 100%;
@@ -79,8 +77,6 @@ body {
   opacity: .32;
 }
 
-/* Luces suaves flotando (tipo "bokeh"). Cada <span> recibe su posición,
-   tamaño y color desde el HTML con variables (--x, --y, --t, --c). */
 .luces { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .luces span {
   position: absolute;
@@ -148,9 +144,6 @@ body {
 .origami .sombra-lado  { fill: url(#g-pliegue-lado); stroke: none; }
 
 
-/* ==========================================================================
-   5. TULIPANES
-   ========================================================================== */
 .tulipan {
   position: absolute;
   left: calc(var(--x) * 1%);                /* --x y --y vienen de JavaScript */
@@ -170,15 +163,9 @@ body {
   to   { rotate:  2.6deg; }
 }
 
-/* Los de la fila de atrás se ven un poquito más pálidos: "perspectiva aérea" */
 .tulipan.lejos { filter: saturate(.78) brightness(1.04); }
 
 
-/* ==========================================================================
-   6. GRULLAS
-   Cada grulla tiene: un div que flota (.flotador) y dentro el SVG,
-   cuyas alas (.ala) aletean despacito.
-   ========================================================================== */
 .grulla {
   position: absolute;
   left: calc(var(--x) * 1%);
@@ -211,12 +198,6 @@ body {
 }
 
 
-/* ==========================================================================
-   7. OVEJAS
-   .oveja → contenedor colocado en el pasto
-     .oveja-sombra → sombrita en el suelo (se encoge cuando salta)
-     .oveja-salto  → la oveja que da saltitos
-   ========================================================================== */
 .oveja {
   position: absolute;
   left: calc(var(--x) * 1%);
@@ -301,10 +282,6 @@ body {
 }
 
 
-/* ==========================================================================
-   9. TÍTULO, PISTA Y BOTÓN
-   .centro es una columna centrada: título → sobre → pista/botón
-   ========================================================================== */
 .centro {
   position: absolute;
   inset: 0;
@@ -742,11 +719,6 @@ body {
 </head>
 
 <body>
-<!-- ======================================================================
-     DEFINICIONES COMPARTIDAS
-     Degradados y filtros que usan varias figuras. Se referencian con
-     url(#nombre). Este SVG mide 0x0: no se ve, pero sus "defs" sí existen.
-     ====================================================================== -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <!-- Sombra que se oscurece hacia abajo (fondo de un doblez) -->
@@ -873,9 +845,6 @@ body {
   </svg>
 </template>
 
-<!-- OVEJA (lienzo de 140 x 104), mirando a la izquierda.
-     La lana es una "bola" de 24 triángulos: los de arriba-izquierda
-     son más claros porque la luz viene de ahí. -->
 <template id="plantilla-oveja">
   <svg class="origami" viewBox="0 0 140 104" aria-hidden="true">
     <!-- patas de atrás (más lejos = más oscuras) -->
@@ -971,9 +940,6 @@ body {
 </template>
 
 
-<!-- ======================================================================
-     LA ESCENA
-     ====================================================================== -->
 <main class="escena">
 
   <!-- Luces suaves del fondo -->
